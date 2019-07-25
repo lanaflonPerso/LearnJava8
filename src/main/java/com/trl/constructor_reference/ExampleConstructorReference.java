@@ -136,7 +136,6 @@ class MyClass01<T> {
 }
 //---------------------------------------------------------------------------------------------------------------------
 // Implement age simple class factory using age constructor reference.
-
 interface MyFunc02<R, T> {
     R func(T n);
 }
