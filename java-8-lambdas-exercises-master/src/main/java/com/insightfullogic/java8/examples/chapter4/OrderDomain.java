@@ -1,6 +1,5 @@
 package com.insightfullogic.java8.examples.chapter4;
 
-
 import com.insightfullogic.java8.examples.chapter1.Album;
 
 import java.util.List;
@@ -12,26 +11,26 @@ public class OrderDomain extends Order {
         super(albums);
     }
 
-// BEGIN body
-public long countFeature(ToLongFunction<Album> function) {
-    return albums.stream()
-            .mapToLong(function)
-            .sum();
-}
+    // BEGIN body
+    public long countFeature(ToLongFunction<Album> function) {
+        return albums.stream()
+                .mapToLong(function)
+                .sum();
+    }
 
-public long countTracks() {
-    return countFeature(album -> album.getTracks().count());
-}
+    public long countTracks() {
+        return countFeature(album -> album.getTracks().count());
+    }
 
-public long countRunningTime() {
-    return countFeature(album -> album.getTracks()
-                                      .mapToLong(track -> track.getLength())
-                                      .sum());
-}
+    public long countRunningTime() {
+        return countFeature(album -> album.getTracks()
+                .mapToLong(track -> track.getLength())
+                .sum());
+    }
 
-public long countMusicians() {
-    return countFeature(album -> album.getMusicians().count());
-}
+    public long countMusicians() {
+        return countFeature(album -> album.getMusicians().count());
+    }
 // END body
 
 }

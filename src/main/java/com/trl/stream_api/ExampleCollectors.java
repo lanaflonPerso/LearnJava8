@@ -1,91 +1,102 @@
 package com.trl.stream_api;
 
+import com.trl.entityes.City;
+import com.trl.entityes.Person;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 
 public class ExampleCollectors {
+
     public static void main(String[] args) throws IOException {
+
 //--------------------------------------------Collectors----------------------------------------------------------------
-//        /*Очень часто из значений с одинаковыми характеристиками образуются группы, и этот процесс непосредственно
-//        поддерживается методом groupingBy().Рассмотрим задачу группирования региональных настроек по странам.
-//        Сначала образуется следующее отображение:*/
-//        Stream<Locale> locales = null;
-//        Map<String, List<Locale>> countryToLocales = locales.collect(Collectors.groupingBy(Locale::getCountry));
-//        /*Функция Locale: :getCountry() исполняет роль классификатора группирования. Затем все региональные настройки можно
-//        отыскать по заданному коду страны, как показано в следующем примере кода:*/
-//        List<Locale> swissLocales = countryToLocales.get("CH");
-//        // получить региональные настройки [it_CH, de_CH, fr_CH]*/
-//
-//        /*Когда функция классификатора оказывается предикатной (т.е. функцией, возвращающей логическое значение типа boolean),
-//        элементы потока данных разделяются на основной список с элементами, для которых функция возвращает логическое значение
-//        true, и дополнительный список. В данном случае эффективнее воспользоваться методом partitioningBy(), чем методом
-//        groupingBy(). Так, в следующем примере кода все региональные настройки разделяются на те, что описывают английский
-//        язык, и все остальные:*/
-//        Map<Boolean, List<Locale>> englishAndOtherLocales = locales.collect(
-//                Collectors.partitioningBy(l -> l.getLanguage().equals("en")));
-//        List<Locale> englishLocales = englishAndOtherLocales.get(true);
+
+        /*Очень часто из значений с одинаковыми характеристиками образуются группы, и этот процесс непосредственно
+        поддерживается методом groupingBy().Рассмотрим задачу группирования региональных настроек по странам.
+        Сначала образуется следующее отображение:*/
+        Stream<Locale> locales = null;
+        Map<String, List<Locale>> countryToLocales = locales.collect(Collectors.groupingBy(Locale::getCountry));
+
+        /*Функция Locale: :getCountry() исполняет роль классификатора группирования. Затем все региональные настройки можно
+        отыскать по заданному коду страны, как показано в следующем примере кода:*/
+        List<Locale> swissLocales = countryToLocales.get("CH");
+        // получить региональные настройки [it_CH, de_CH, fr_CH]*/
+
+        /*Когда функция классификатора оказывается предикатной (т.е. функцией, возвращающей логическое значение типа boolean),
+        элементы потока данных разделяются на основной список с элементами, для которых функция возвращает логическое значение
+        true, и дополнительный список. В данном случае эффективнее воспользоваться методом partitioningBy(), чем методом
+        groupingBy(). Так, в следующем примере кода все региональные настройки разделяются на те, что описывают английский
+        язык, и все остальные:*/
+
+        Map<Boolean, List<Locale>> englishAndOtherLocales = locales.collect(
+                Collectors.partitioningBy(l -> l.getLanguage().equals("en")));
+        List<Locale> englishLocales = englishAndOtherLocales.get(true);
+
 //----------------------------------------------CollectingResults-------------------------------------------------------
-//        /*По завершении обработки потока данных нередко требуется просмотреть полученные результаты. С этой целью можно
-//        вызвать метод iterate(), предоставляющий устаревший итератор, которым можно воспользоваться для обхода элементов.*/
-//        Iterator<Integer> iter = Stream.iterate(0, n -> n + 1).limit(10).iterator();
-//        while (iter.hasNext())
-//            System.out.println(iter.next());
-//
-//        Object[] numbers = Stream.iterate(0, n -> n + 1).limit(10).toArray();
+
+        /*По завершении обработки потока данных нередко требуется просмотреть полученные результаты. С этой целью можно
+        вызвать метод iterate(), предоставляющий устаревший итератор, которым можно воспользоваться для обхода элементов.*/
+        Iterator<Integer> iter = Stream.iterate(0, n -> n + 1).limit(10).iterator();
+        while (iter.hasNext())
+            System.out.println(iter.next());
+
+        Object[] numbers = Stream.iterate(0, n -> n + 1).limit(10).toArray();
 //        System.out.println("Object array:" + numbers); // Note it's an Object[] array
-//
-//        try {
-//            Integer number = (Integer) numbers[0]; // OK
+
+        try {
+            Integer number = (Integer) numbers[0]; // OK
 //            System.out.println("number: " + number);
 //            System.out.println("The following statement throws an exception:");
-//            Integer[] numbers2 = (Integer[]) numbers; // Throws exception
-//        } catch (ClassCastException ex) {
-//            System.out.println(ex);
-//        }
-//        /*Но чаще всего результаты требуется накапливать в структуре данных. С этой целью можно вызвать метод toArray()
-//        и получить элементы из потока данных.Создать обобщенный массив во время выполнения невозможно, и поэтому в результате
-//        вызова stream.toArray() возвращается массив типа Object []. Если же требуется массив нужного типа, этому методу
-//        следует передать конструктор такого массива, как показано ниже.*/
-//        Integer[] numbers3 = Stream.iterate(0, n -> n + 1).limit(10).toArray(Integer[]::new);
+            Integer[] numbers2 = (Integer[]) numbers; // Throws exception
+        } catch (ClassCastException ex) {
+            System.out.println(ex);
+        }
+        /*Но чаще всего результаты требуется накапливать в структуре данных. С этой целью можно вызвать метод toArray()
+        и получить элементы из потока данных.Создать обобщенный массив во время выполнения невозможно, и поэтому в результате
+        вызова stream.toArray() возвращается массив типа Object []. Если же требуется массив нужного типа, этому методу
+        следует передать конструктор такого массива, как показано ниже.*/
+        Integer[] numbers3 = Stream.iterate(0, n -> n + 1).limit(10).toArray(Integer[]::new);
 //        System.out.println("Integer array: " + numbers3); // Note it's an Integer[] array
-//        /*Для накопления элементов потока данных с другой целью имеется удобный метод collect(), принимающий экземпляр
-//        класса, реализующего интерфейс Collector. В частности, класс Collectors предоставляет немало фабричных методов для
-//        наиболее употребительных коллекторов. Так, для накопления потока данных в списке или множестве достаточно сделать
-//        один из следующих вызовов:*/
-//        Set<String> noVowelSet = noVowels().collect(Collectors.toSet());
-//        show("noVowelSet", noVowelSet);
-//        /*Если же требуется конкретная разновидность получаемого множества, то нужно сделать следующий вызов:*/
-//        TreeSet<String> noVowelTreeSet = noVowels().collect(Collectors.toCollection(TreeSet::new));
-//        show("noVowelTreeSet", noVowelTreeSet);
-//        /*Допустим, требуется накапливать все символьные строки, сцепляя их. С этой целью можно сделать следующий вызов:*/
-//        String result = noVowels().limit(10).collect(Collectors.joining());
+        /*Для накопления элементов потока данных с другой целью имеется удобный метод collect(), принимающий экземпляр
+        класса, реализующего интерфейс Collector. В частности, класс Collectors предоставляет немало фабричных методов для
+        наиболее употребительных коллекторов. Так, для накопления потока данных в списке или множестве достаточно сделать
+        один из следующих вызовов:*/
+        Set<String> noVowelSet = noVowels().collect(Collectors.toSet());
+        show("noVowelSet", noVowelSet);
+        /*Если же требуется конкретная разновидность получаемого множества, то нужно сделать следующий вызов:*/
+        TreeSet<String> noVowelTreeSet = noVowels().collect(Collectors.toCollection(TreeSet::new));
+        show("noVowelTreeSet", noVowelTreeSet);
+        /*Допустим, требуется накапливать все символьные строки, сцепляя их. С этой целью можно сделать следующий вызов:*/
+        String result = noVowels().limit(10).collect(Collectors.joining());
 //        System.out.println("Joining: " + result);
-//        /*А если требуется разделитель элементов, то его можно передать методу joining() следующим образом:*/
-//        result = noVowels().limit(10).collect(Collectors.joining(", "));
+        /*А если требуется разделитель элементов, то его можно передать методу joining() следующим образом:*/
+        result = noVowels().limit(10).collect(Collectors.joining(", "));
 //        System.out.println("Joining with commas: " + result);
-//        /*Если результаты обработки потока данных требуется свести к сумме, среднему, максимуму или минимуму, воспользуйтесь
-//        методами типа summarizing(Int | Long I Double). Эти методы принимают функцию, преобразующую потоковые объекты в
-//        число и возвращающую результат типа (Int | Long | Double)SummaryStatistics, одновременно вычисляя сумму, среднее,
-//        максимум и минимум, как показано ниже.*/
-//        IntSummaryStatistics summary = noVowels().collect(Collectors.summarizingInt(String::length));
-//        double averageWordLength = summary.getAverage();
-//        double maxWordLength = summary.getMax();
+        /*Если результаты обработки потока данных требуется свести к сумме, среднему, максимуму или минимуму, воспользуйтесь
+        методами типа summarizing(Int | Long I Double). Эти методы принимают функцию, преобразующую потоковые объекты в
+        число и возвращающую результат типа (Int | Long | Double)SummaryStatistics, одновременно вычисляя сумму, среднее,
+        максимум и минимум, как показано ниже.*/
+        IntSummaryStatistics summary = noVowels().collect(Collectors.summarizingInt(String::length));
+        double averageWordLength = summary.getAverage();
+        double maxWordLength = summary.getMax();
 //        System.out.println("Average word length: " + averageWordLength);
 //        System.out.println("Max word length: " + maxWordLength);
 //        System.out.println("forEach:");
-//        /*С другой стороны, можно вызвать метод forEach(), чтобы применить функцию к каждому элементу следующим образом:*/
-//        noVowels().limit(10).forEach(System.out::println);
-//        /*В параллельном потоке данных метод forEach() выполняет обход элементов в произвольном порядке. Если же их
-//        требуется обработать в потоковом порядке, то следует вызвать метод forEachOrdered(). Разумеется, в этом случае могут
-//        быть утрачены некоторые или даже все преимущества параллелизма.*/
-//        noVowels().limit(10).forEachOrdered(System.out::println);
+        /*С другой стороны, можно вызвать метод forEach(), чтобы применить функцию к каждому элементу следующим образом:*/
+        noVowels().limit(10).forEach(System.out::println);
+        /*В параллельном потоке данных метод forEach() выполняет обход элементов в произвольном порядке. Если же их
+        требуется обработать в потоковом порядке, то следует вызвать метод forEachOrdered(). Разумеется, в этом случае могут
+        быть утрачены некоторые или даже все преимущества параллелизма.*/
+        noVowels().limit(10).forEachOrdered(System.out::println);
 //------------------------------------------CollectingIntoMaps----------------------------------------------------------
 //        /*Допустим, имеется поток данных типа Stream<Person> и его элементы требуется накапливать в отображении, чтобы в дальнейшем
 //        искать людей по их идентификационному номеру. Для этой цели служит метод Collectors. toMap (),принимающий в качестве двух
@@ -160,9 +171,9 @@ public class ExampleCollectors {
         Map<String, Long> countryToLocaleCounts = locales3.collect(groupingBy(Locale::getCountry, counting()));
         System.out.println("countryToLocaleCounts: " + countryToLocaleCounts);
 
-        Stream<ExampleCollectors.City> cities = readCities("src/main/resources/StreamArchivos/cities.txt");
+        Stream<City> cities = readCities("src/main/resources/StreamArchivos/cities.txt");
         Map<String, Integer> stateToCityPopulation = cities.collect(groupingBy(
-                ExampleCollectors.City::getState, summingInt(ExampleCollectors.City::getPopulation)));
+                City::getState, summingInt(City::getPopulation)));
         System.out.println("stateToCityPopulation: " + stateToCityPopulation);
         /*Метод mapping() позволяет изящнее решить задачу из предыдущего раздела — собрать все языки, употребляемые в
         стране. В предыдущем разделе вместо метода groupingBy() применялся метод toMap(). А в приведенном ниже
@@ -170,8 +181,8 @@ public class ExampleCollectors {
         cities = readCities("src/main/resources/StreamArchivos/cities.txt");
         Map<String, Optional<String>> stateToLongestCityName = cities
                 .collect(groupingBy(
-                        ExampleCollectors.City::getState,
-                        mapping(ExampleCollectors.City::getName,
+                        City::getState,
+                        mapping(City::getName,
                                 maxBy(Comparator.comparing(String::length)))));
         System.out.println("stateToLongestCityName: " + stateToLongestCityName);
 
@@ -185,25 +196,45 @@ public class ExampleCollectors {
         статистики каждой группы можно получить суммарное, подсчитанное, среднее, минимальное и максимальное значения функции.*/
         cities = readCities("src/main/resources/StreamArchivos/cities.txt");
         Map<String, IntSummaryStatistics> stateToCityPopulationSummary = cities
-                .collect(groupingBy(ExampleCollectors.City::getState,
-                        summarizingInt(ExampleCollectors.City::getPopulation)));
+                .collect(groupingBy(City::getState,
+                        summarizingInt(City::getPopulation)));
         System.out.println(stateToCityPopulationSummary.get("NY"));
 
         cities = readCities("src/main/resources/StreamArchivos/cities.txt");
         Map<String, String> stateToCityNames = cities.collect(groupingBy(
-                ExampleCollectors.City::getState,
-                reducing("", ExampleCollectors.City::getName, (s, t) -> s.length() == 0 ? t : s
-                        + ", " + t)));
+                City::getState,
+                reducing("", City::getName, (s, t) -> s.length() == 0 ? t : s + ", " + t)));
 
         cities = readCities("src/main/resources/StreamArchivos/cities.txt");
-        stateToCityNames = cities.collect(groupingBy(ExampleCollectors.City::getState,
-                mapping(ExampleCollectors.City::getName, joining(", "))));
+        stateToCityNames = cities.collect(groupingBy(City::getState,
+                mapping(City::getName, joining(", "))));
         System.out.println("stateToCityNames: " + stateToCityNames);
+
+//----------------------------------------Stroim-svoi-Collector---------------------------------------------------------
+
+        Collector<Person, StringJoiner, String> personNameCollector =
+                Collector.of(
+                        () -> new StringJoiner(" | "),      // supplier
+                        (j, p) -> j.add(p.getName().toUpperCase()),     // accumulator
+                        StringJoiner::merge,						    // combiner
+                        StringJoiner::toString								// finisher
+                );
+
+        List<Person> personList = new ArrayList<>(
+                Arrays.asList(
+                        new Person("Andrey", 35), new Person("Anton", 23),
+                        new Person("Stas", 35), new Person("Karla", 44),
+                        new Person("Arancha", 44), new Person("Vasya", 12)
+                ));
+
+        String names = personList.stream().collect(personNameCollector);
+//		System.out.println(names);
+
 //----------------------------------------------------------------------------------------------------------------------
     }
     public static Stream<String> noVowels() throws IOException {
         String contents = new String(Files.readAllBytes(
-                Paths.get("src/main/resources/StreamArchivos/alice30M")),
+                Paths.get("StreamArchvos/alice30M")),
                 StandardCharsets.UTF_8);
         List<String> wordList = Arrays.asList(contents.split("\\PL+"));
         Stream<String> words = wordList.stream();
@@ -218,62 +249,19 @@ public class ExampleCollectors {
                 .collect(Collectors.joining(", ")) + "]");
     }
 
-    public static class Person {
-        private int id;
-        private String name;
-
-        public Person(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String toString() {
-            return getClass().getName() + "[id=" + id + ",name=" + name + "]";
-        }
-    }
 
     public static Stream<Person> people() {
-        return Stream.of(new Person(1001, "Peter"), new Person(1002, "Paul"),
-                new Person(1003, "Mary"));
-    }
-
-    public static class City {
-        private String name;
-        private String state;
-        private int population;
-
-        public City(String name, String state, int population) {
-            this.name = name;
-            this.state = state;
-            this.population = population;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getState() {
-            return state;
-        }
-
-        public int getPopulation() {
-            return population;
-        }
+        return Stream.of(new Person( "Peter", 1001), new Person("Paul", 1002),
+                new Person("Mary", 1003));
     }
 
     public static Stream<City> readCities(String filename) throws IOException {
         return Files.lines(Paths.get(filename)).map(l -> l.split(", "))
-                .peek(strings -> System.out.println(strings)).map(a -> new City(a[0], a[1], Integer.parseInt(a[2])));
+                .peek(System.out::println).map(a -> new City(a[0], a[1], Integer.parseInt(a[2])));
     }
 }
+
+
 
 /*
 ----------------------------------------------------------------------------------------------------------------------
