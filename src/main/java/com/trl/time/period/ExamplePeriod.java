@@ -1,9 +1,6 @@
 package com.trl.time.period;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Period;
-import java.time.Year;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 public class ExamplePeriod {
@@ -24,11 +21,14 @@ public class ExamplePeriod {
 
         // Creates a period of 41 years, 2 months, and 3 days
         Period period1 = Period.parse("P41Y2M3D");
-        System.out.println(period1);
+        System.out.println("Period.parse(\"P41Y2M3D\") --> " + period1);
 
         // Creates a period of 4 weeks
         Period period2 = Period.parse("P4W");
-        System.out.println(period2.getDays()+ " days");
+        System.out.println("Period.parse(\"P4W\") --> " + period2.getDays() + " days");
+
+        Period p = Period.parse("P1Y");
+        System.out.println("Period.parse(\"P1Y\") --> " + p.getMonths());
 
         // ============================================================================================= period.get...()
 
@@ -109,6 +109,17 @@ public class ExamplePeriod {
         p2015M = p2015M.minusMonths(2016); // 2015-2016 is -1 Months
         System.out.println("Is negative: " + p2015M.isNegative());
 
+        // ============================================================================================ Period.between()
+
+        int days = Period.between(LocalDate.now(), LocalDate.of(2019, 8, 15)).getDays();
+        System.out.println("Period.between(LocalDate.of(2019, 8, 15), LocalDate.now()).getDays() --> " + days);
+
+        long days_0 = ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.of(2019, 8, 15));
+        System.out.println("ChronoUnit.DAYS.between(LocalDate.of(2019, 8, 15), LocalDate.now()) --> " + days_0);
+
+        // ERROR
+//        Period p_0 = Period.between(LocalDateTime.now().toLocalTime(), LocalTime.now());
+
         // =============================================================================================================
 
         final String WAR_OF_1812_START_DATE = "1812-06-18";
@@ -117,7 +128,7 @@ public class ExamplePeriod {
         LocalDate warBegins = LocalDate.parse(WAR_OF_1812_START_DATE);
         LocalDate warEnds = LocalDate.parse(WAR_OF_1812_END_DATE);
 
-        Period period_b = Period.between (warBegins, warEnds);
+        Period period_b = Period.between(warBegins, warEnds);
         System.out.println("WAR OF 1812 TIME FRAME: " + period_b);
 
     }

@@ -3,8 +3,10 @@ package com.trl.time.formatters.dateTimeFormatter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 
 import static java.time.format.DateTimeFormatter.ISO_WEEK_DATE;
 
@@ -61,6 +63,17 @@ public class ExampleDateTimeFormatter {
         System.out.println(LocalDate.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)));
 
         System.out.println(LocalDate.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)));
+
+        // =============================================================================================================
+
+        String localDateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE);
+        System.out.println("LocalDateTime.now().format(DateTimeFormatter.ISO_DATE) --> " + localDateString);
+
+        String format = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        System.out.println("LocalDateTime.now().format(DateTimeFormatter.ofPattern(\"yyyy/MM/dd\")) --> " + format);
+
+        String format1 = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.UK));
+        System.out.println("LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.UK)) --> " + format1);
 
     }
 
